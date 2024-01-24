@@ -96,16 +96,14 @@ def edit_header(filename: str, key: str, value: int | float | str) -> None:
     if key == "source_name" and isinstance(value, str):
         oldlen = len(header["source_name"])
         value = value[:oldlen] + " " * (oldlen - len(value))
-
+    
     hdr = header.copy()
     hdr.update({key: value})
     new_hdr = encode_header(hdr)
-    if header["hdrlen"] == len(new_hdr):
-        with open(filename, "rb+") as fp:
-            fp.seek(0)
-            fp.write(new_hdr)
-    else:
-        raise ValueError("New header is too long/short for file")
+    with open(filename, "rb+") as fp:
+        fp.seek(0)
+        fp.write(new_hdr)
+     
 
 
 def parse_header_multi(filenames: str | list[str], check_contiguity: bool = True) -> dict:
@@ -347,3 +345,5 @@ def _read_string(fp):
     """
     strlen = struct.unpack("I", fp.read(struct.calcsize("I")))[0]
     return fp.read(strlen).decode()
+
+
